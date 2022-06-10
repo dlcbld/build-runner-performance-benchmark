@@ -7,7 +7,7 @@ shell: bash
 env:
   exportedVariables:
     - GEEKBENCH_REPORTS_URL
-    - TIME_TAKEN_1GB
+    - SPEEDTEST_RESULT
 
 steps:
   - type: Command
@@ -17,8 +17,9 @@ steps:
       echo "Install Speedtest CLI"
       curl -LO https://install.speedtest.net/app/cli/ookla-speedtest-1.1.1-linux-x86_64.tgz
       tar -zxf ookla-speedtest-1.1.1-linux-x86_64.tgz
-      ./speedtest > SpeedtestOutput.txt 2>&1
+      ./speedtest --accept-license -p no -P 0 > SpeedtestOutput.txt 2>&1
       cat SpeedtestOutput.txt
+      SPEEDTEST_RESULT=`./speedtest --accept-license -p no -P 0 -f json-pretty`
   - type: Command
     name: "Run Geekbench"
     timeoutInSeconds: 3600
@@ -34,11 +35,3 @@ steps:
       cat GeekbenchOutput.txt
       GEEKBENCH_REPORTS_URL=`grep "browser.geekbench.com" GeekbenchOutput.txt | grep -v claim`
       echo "View reports: $GEEKBENCH_REPORTS_URL"
-
-outputArtifacts:
-  - name: SpeedtestOutput
-    type: BINARY
-    location: SpeedtestOutput.txt
-  - name: GeekbenchOutput
-    type: BINARY
-    location: GeekbenchOutput.txt
