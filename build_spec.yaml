@@ -7,8 +7,22 @@ shell: bash
 env:
   exportedVariables:
     - GEEKBENCH_REPORTS_URL
+    - TIME_TAKEN_1GB
 
 steps:
+  - type: Command
+    name: "Download 1GB file"
+    timeoutInSeconds: 3600
+    command: |
+      echo "Downloading file of 1GB"
+      START_TIME=`date`
+      curl -L -o "File1GB" https://speedtest-ny.turnkeyinternet.net/1000mb.bin
+      END_TIME=`date`
+      echo "Completed downloading file of 1GB
+      sdt=$( date -d "$START_TIME" +%s )
+      edt=$( date -d "$END_TIME" +%s )
+      TIME_TAKEN_1GB=$((edt-sdt))
+      echo "$edt $sdt" | awk ' { printf("It took %f seconds to download\n", ($1-$2)); } '
   - type: Command
     name: "Run Geekbench"
     timeoutInSeconds: 3600
@@ -29,13 +43,11 @@ steps:
     timeoutInSeconds: 3600
     command: |
       echo "Install Speedtest CLI"
+      yum install speedtest-cli
       speedtest -simple > SpeedtestOutput.txt 2>&1
       cat SpeedtestOutput.txt
 
 outputArtifacts:
-  - name: GeekbenchReport
+  - name: File1GB
     type: BINARY
-    location: GeekbenchOutput.txt
-  - name: SpeedtestReport
-    type: BINARY
-    location: SpeedtestOutput.txt
+    location: File1GB
