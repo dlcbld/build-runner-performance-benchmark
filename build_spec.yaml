@@ -24,3 +24,18 @@ steps:
       cat GeekbenchOutput.txt
       GEEKBENCH_REPORTS_URL=`grep "browser.geekbench.com" GeekbenchOutput.txt | grep -v claim`
       echo "View reports: $GEEKBENCH_REPORTS_URL"
+  - type: Command
+    name: "Run Speedtest"
+    timeoutInSeconds: 3600
+    command: |
+      echo "Install Speedtest CLI"
+      speedtest -simple > SpeedtestOutput.txt 2>&1
+      cat SpeedtestOutput.txt
+
+outputArtifacts:
+  - name: GeekbenchReport
+    type: BINARY
+    location: GeekbenchOutput.txt
+  - name: SpeedtestReport
+    type: BINARY
+    location: SpeedtestOutput.txt
