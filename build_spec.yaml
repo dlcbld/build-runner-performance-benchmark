@@ -11,6 +11,15 @@ env:
 
 steps:
   - type: Command
+    name: "Run Speedtest"
+    timeoutInSeconds: 3600
+    command: |
+      echo "Install Speedtest CLI"
+      curl -LO https://install.speedtest.net/app/cli/ookla-speedtest-1.1.1-linux-x86_64.tgz
+      tar -zxf ookla-speedtest-1.1.1-linux-x86_64.tgz
+      ./speedtest > SpeedtestOutput.txt 2>&1
+      cat SpeedtestOutput.txt
+  - type: Command
     name: "Download 1GB file"
     timeoutInSeconds: 3600
     command: |
@@ -38,14 +47,6 @@ steps:
       cat GeekbenchOutput.txt
       GEEKBENCH_REPORTS_URL=`grep "browser.geekbench.com" GeekbenchOutput.txt | grep -v claim`
       echo "View reports: $GEEKBENCH_REPORTS_URL"
-  - type: Command
-    name: "Run Speedtest"
-    timeoutInSeconds: 3600
-    command: |
-      echo "Install Speedtest CLI"
-      yum install speedtest-cli
-      speedtest -simple > SpeedtestOutput.txt 2>&1
-      cat SpeedtestOutput.txt
 
 outputArtifacts:
   - name: File1GB
