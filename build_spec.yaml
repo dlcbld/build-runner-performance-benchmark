@@ -21,6 +21,14 @@ steps:
       cat SpeedtestOutput.txt
       SPEEDTEST_RESULT=`./speedtest --accept-license -p no -P 0 -f json-pretty`
   - type: Command
+    name: "Run disk benchmark"
+    timeoutInSeconds: 3600
+    command: |
+      echo "Install hdparm"
+      yum -y install hdparm
+      df -H
+      hdparm -Tt /dev/mapper/vg00-root
+  - type: Command
     name: "Run Geekbench"
     timeoutInSeconds: 3600
     command: |
